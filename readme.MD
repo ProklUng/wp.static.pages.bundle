@@ -2,6 +2,25 @@
 
 В качестве базы используется форкнутый класс Symfony\Bundle\FrameworkBundle\Controller\TemplateController
 
+## Установка
+
+composer.json:
+
+```json
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/proklung/wp.static.pages.bundle"
+        }
+    ]
+```
+
+```bash
+
+composer require proklung/wp-static-pages-bundle
+
+```
+
 ### Пример конфига бандла
 
 ```yaml
