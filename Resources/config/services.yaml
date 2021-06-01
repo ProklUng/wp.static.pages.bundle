@@ -1,0 +1,42 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  Prokl\StaticPageMakerBundle\Services\TemplateControllerContainerAware:
+    arguments: ['@static_page_maker.default.context.processors', '@twig.instance']
+    calls:
+      - setContainer: ['@service_container']
+
+  static_page_maker.default.context.processors:
+    public: false
+    class: Prokl\StaticPageMakerBundle\Services\ContextProcessors\DefaultContextProcessorsBag
+    calls:
+      - setProcessors: [ !tagged_iterator static_page_maker.default.context.processor]
+
+  Prokl\StaticPageMakerBundle\Services\ContextProcessors\SeoContextProcessor:
+    arguments: ['@static_page_maker.wp_query_proxy']
+    class: Prokl\StaticPageMakerBundle\Services\ContextProcessors\SeoContextProcessor
+    tags:
+      - { name: static_page_maker.default.context.processor }
+
+  wp.query.instance:
+    public: false
+    class: WP_Query
+
+  static_page_maker.wp_query_proxy:
+    public: false
+    class: Prokl\StaticPageMakerBundle\Services\Utils\WpQueryProxy
+    arguments: ['@wp.query.instance']
+
+  static_page_maker.twig_utils:
+    public: false
+    class: Prokl\StaticPageMakerBundle\Services\Utils\TwigUtils
+    arguments: ['@twig.instance', '@filesystem']
+
+  static_page_maker.listener_set_last_modified:
+    class: Prokl\StaticPageMakerBundle\Event\SetLastModifiedHeaderListener
+    arguments: ['@static_page_maker.twig_utils', '%static_page_maker.set_last_modified_header%']
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, method: handle, priority: 10 }

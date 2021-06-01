@@ -1,0 +1,87 @@
+{# head #}
+{% block head %}
+    <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> {{ title }}</title>
+    <meta property="description" content="{{ description }}"/>
+    <meta property="og:site_name" content="Example site"/>
+    <meta property="fb:admins" content="100003346913744"/>
+    <meta name="article:publisher" content="https://www.facebook.com/example/"/>
+    <meta property="og:title" content=" {{ title }}"/>
+    <meta property="og:description" content="{{ description }}"/>
+
+    <link rel="profile" href="https://gmpg.org/xfn/11">
+    <link rel="preload" href="{{ get_site_url() }}/fonts/Geometric/SFUIDisplay-Regular.woff" as="font" crossorigin="anonymous">
+    <link rel="preload" href="{{ get_site_url() }}/fonts/Geometric/SFUIDisplay-Semibold.woff" as="font" crossorigin="anonymous">
+    <link rel="preload" href="{{ get_site_url() }}/fonts/Golos/GolosText_Regular.woff2" as="font" crossorigin="anonymous">
+
+    {% if assets.css|length %}
+        {{ encore_entry_link_tags(assets.css) }}
+    {% endif %}
+
+    {% if assets.css_page|length %}
+        {{ encore_entry_link_tags(assets.css_page) }}
+    {% endif %}
+
+</head>
+{% endblock %}
+
+<body class="{{ postClasses }}">
+
+{# inline стили #}
+{% block styles %}
+
+{% endblock %}
+
+{# То, что выводит шапку сайта #}
+{% block vueheader %}
+    <div class="vue-component" data-component="ModernPreloader" data-initial='{}'></div>
+
+<div class="hfeed site" id="page">
+    {{ component('HeaderBlog') }}
+
+    <div id="sidebar-container">
+        <div id="hero-cont" class="container-fluid p-0">
+        </div>
+    </div>
+
+    <div class="vue-loader-html">
+        <div class="vue-component" data-component="LoaderSidebar"
+             data-initial='{"handler": "/api/sidebar-data/",
+                            "target" : "sidebar-container"
+                            }'>
+        </div>
+    </div>
+    {% endblock %}
+
+    {# Хлебные крошки #}
+    {% block breadcrumbs %}
+        <div class="blog__breadCrumbs d-none d-sm-block">
+            {{ breadcrumbs }}
+        </div>
+    {% endblock %}
+
+    {# Контент #}
+    {% block content %}
+
+    {% endblock %}
+
+    {# footer #}
+    {% block footer %}
+    <footer>
+        <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+
+        {% if assets.js|length %}
+            {{ encore_entry_script_tags(assets.js) }}
+        {% endif %}
+    </footer>
+
+</div>
+
+</body>
+
+</html>
+{% endblock %}

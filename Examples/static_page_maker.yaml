@@ -1,0 +1,3 @@
+static_page_maker:
+  post_type: static_pages
+  set_last_modified_header: true
