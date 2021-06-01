@@ -173,13 +173,6 @@ class TemplateControllerContainerAware extends TemplateController
 
         $processors = (array)$context['_processors'];
 
-        // Если задан в конфиге бандла ID инфоблока, то пускать в дело процессоры по умолчанию.
-        if ($this->container->hasParameter('static_page_maker.seo_iblock_id')
-            &&
-            (int)$this->container->getParameter('static_page_maker.seo_iblock_id') > 0) {
-            $processors = array_merge($this->contextProcessorsBag->getProcessors(), $processors);
-        }
-
         /**
          * @var ContextProcessorInterface $processor Процессор контекста.
          */

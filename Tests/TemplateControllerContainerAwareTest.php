@@ -7,7 +7,6 @@ use Faker\Factory;
 use Faker\Generator;
 use Prokl\StaticPageMakerBundle\Services\AbstractContextProcessor;
 use Prokl\StaticPageMakerBundle\Services\ContextProcessors\DefaultContextProcessorsBag;
-use Prokl\StaticPageMakerBundle\Services\TemplateController;
 use Prokl\StaticPageMakerBundle\Services\TemplateControllerContainerAware;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
