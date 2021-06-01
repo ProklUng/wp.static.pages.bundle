@@ -2,7 +2,7 @@
 
 В качестве базы используется форкнутый класс Symfony\Bundle\FrameworkBundle\Controller\TemplateController
 
-## Установка
+### Установка
 
 composer.json:
 
