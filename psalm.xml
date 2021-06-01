@@ -19,8 +19,7 @@
         <ignoreFiles>
             <directory name="vendor"/>
             <directory name="Tests"/>
-            <file name="InstagramParserRapidApiBundle.php"/>
-            <file name="DependencyInjection/InstagramParserRapidApiExtension.php"/>
+            <file name="StaticPageMakerBundle.php"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -47,31 +46,5 @@
                 <directory name="/"/>
             </errorLevel>
         </UnusedClosureParam>
-        <PossiblyNullReference>
-            <errorLevel type="suppress">
-                <file name="DependencyInjection/Configuration.php"/>
-            </errorLevel>
-        </PossiblyNullReference>
-        <PossiblyUndefinedMethod>
-            <errorLevel type="suppress">
-                <file name="DependencyInjection/Configuration.php"/>
-            </errorLevel>
-        </PossiblyUndefinedMethod>
-        <MixedMethodCall>
-            <errorLevel type="suppress">
-                <file name="DependencyInjection/Configuration.php"/>
-            </errorLevel>
-        </MixedMethodCall>
-        <MixedOperand>
-            <errorLevel type="suppress">
-                <file name="Command/MakeFixtures.php"/>
-                <file name="Services/UserInfoRetriever.php"/>
-            </errorLevel>
-        </MixedOperand>
-        <MixedArrayAccess>
-            <errorLevel type="suppress">
-                <file name="Services/InstagramDataTransformerRapidApi.php"/>
-            </errorLevel>
-        </MixedArrayAccess>
-    </issueHandlers>
+     </issueHandlers>
 </psalm>
