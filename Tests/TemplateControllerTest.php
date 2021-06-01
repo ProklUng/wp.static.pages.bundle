@@ -8,7 +8,7 @@ use Faker\Generator;
 use Prokl\StaticPageMakerBundle\Services\TemplateController;
 use LogicException;
 use PHPUnit\Framework\TestCase;
-use Timber\Timber;
+use Prokl\TestingTools\Base\BaseTestCase;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -20,22 +20,12 @@ use Twig\Error\SyntaxError;
  *
  * @since 25.01.2021
  */
-class TemplateControllerTest extends TestCase
+class TemplateControllerTest extends BaseTestCase
 {
     /**
      * @var TemplateController $testObject
      */
     private $testObject;
-
-    /**
-     * @var Generator $faker
-     */
-    private $faker;
-
-    /**
-     * @var array $backupTimberLocations
-     */
-    private $backupTimberLocations = [];
 
     /**
      * @throws Exception
@@ -45,27 +35,14 @@ class TemplateControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->faker = Factory::create();
-        $this->backupTimberLocations = Timber::$locations;
-
-        Timber::$locations[] = __DIR__ . '/templates';
-
-        /** @var Environment $twig */
-        $twig = container()->get('twig.instance');
+        $twigMock = \Mockery::mock(Environment::class);
+        $twigMock = $twigMock->shouldReceive('getLoader')->andReturn(\Mockery::self());
+        $twigMock = $twigMock->shouldReceive('getPaths')->andReturn([__DIR__ . '/templates']);
+        $twigMock = $twigMock->shouldReceive('render')->andReturn('OK');
 
         $this->testObject = new TemplateController(
-            $twig
+            $twigMock->getMock()
         );
-    }
-
-    /**
-     * @return void
-     */
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        Timber::$locations = $this->backupTimberLocations;
     }
 
     /**

@@ -14,6 +14,12 @@
         "issues": "https://github.com/ProklUng/wp.static.pages.bundle/issues",
         "source": "https://github.com/ProklUng/wp.static.pages.bundle"
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/proklung/wordpress-test-build"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Prokl\\StaticPageMakerBundle\\": ""
@@ -34,6 +40,6 @@
         "twig/twig": "^1.43|^2.13"
     },
     "require-dev": {
-        "proklung/phpunit-testing-tools": "^1.0"
+        "proklung/wordpress-test-build": "^1.0"
     }
 }

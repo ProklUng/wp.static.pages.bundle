@@ -7,7 +7,7 @@ use Faker\Generator;
 use Prokl\StaticPageMakerBundle\Services\ContextProcessors\SeoContextProcessor;
 use Prokl\StaticPageMakerBundle\Services\Utils\WpQueryProxy;
 use Mockery;
-use PHPUnit\Framework\TestCase;
+use Prokl\WordpressCi\Base\WordpressableTestCase;
 use RuntimeException;
 use WP_Post;
 
@@ -17,7 +17,7 @@ use WP_Post;
  *
  * @since 24.01.2021
  */
-class SeoContextProcessorTest extends TestCase
+class SeoContextProcessorTest extends WordpressableTestCase
 {
     /**
      * @var SeoContextProcessor $testObject

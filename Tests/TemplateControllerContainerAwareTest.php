@@ -3,15 +3,13 @@
 namespace Prokl\StaticPageMakerBundle\Tests;
 
 use Exception;
-use Faker\Factory;
-use Faker\Generator;
+use Mockery;
 use Prokl\StaticPageMakerBundle\Services\AbstractContextProcessor;
 use Prokl\StaticPageMakerBundle\Services\ContextProcessors\DefaultContextProcessorsBag;
 use Prokl\StaticPageMakerBundle\Services\TemplateControllerContainerAware;
-use PHPUnit\Framework\TestCase;
+use Prokl\TestingTools\Base\BaseTestCase;
 use ReflectionException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Timber\Timber;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -23,7 +21,7 @@ use Twig\Error\SyntaxError;
  *
  * @since 25.01.2021
  */
-class TemplateControllerContainerAwareTest extends TestCase
+class TemplateControllerContainerAwareTest extends BaseTestCase
 {
     /**
      * @var TemplateControllerContainerAware $testObject
@@ -31,20 +29,9 @@ class TemplateControllerContainerAwareTest extends TestCase
     private $testObject;
 
     /**
-     * @var array $backupTimberLocations
-     */
-    private $backupTimberLocations = [];
-
-    /**
      * @var ContainerBuilder $container
      */
-    private $container;
-
-    /**
-     * @var Generator | null $faker
-     */
-    private $faker;
-
+    private $testingContainer;
 
     /**
      * @throws Exception
@@ -54,31 +41,11 @@ class TemplateControllerContainerAwareTest extends TestCase
     {
         parent::setUp();
 
-        $this->faker = Factory::create();
-
-        $this->backupTimberLocations = Timber::$locations;
-
-        Timber::$locations[] = $_SERVER['DOCUMENT_ROOT'] . '/utils/Bundles/StaticPageMakerBundle/Tests/templates';
-
-        /** @var Environment $twig */
-        $twig = container()->get('twig.instance');
-
         $this->testObject = new TemplateControllerContainerAware(
             new DefaultContextProcessorsBag(),
-            $twig
+            $this->getMockTwig('OK')
         );
     }
-
-    /**
-     * @return void
-     */
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        Timber::$locations = $this->backupTimberLocations;
-    }
-
 
     /**
      * Проверка ресолвинга переменных из контейнера.
@@ -93,10 +60,15 @@ class TemplateControllerContainerAwareTest extends TestCase
     {
         $value = 'test';
 
-        $this->container = new ContainerBuilder();
-        $this->container->setParameter('test.parameter', $value);
+        $this->testObject = new TemplateControllerContainerAware(
+            new DefaultContextProcessorsBag(),
+            $this->getMockTwig('Testing variable: ' . $value)
+        );
 
-        $this->testObject->setContainer($this->container);
+        $this->testingContainer = new ContainerBuilder();
+        $this->testingContainer->setParameter('test.parameter', $value);
+
+        $this->testObject->setContainer($this->testingContainer);
 
         $result = $this->testObject->templateAction(
             './testing.twig',
@@ -132,10 +104,15 @@ class TemplateControllerContainerAwareTest extends TestCase
     {
         $value = 'testing service value';
 
-        $this->container = new ContainerBuilder();
-        $this->container->register('test.service', get_class($this->getTestService()));
+        $this->testObject = new TemplateControllerContainerAware(
+            new DefaultContextProcessorsBag(),
+            $this->getMockTwig($value)
+        );
 
-        $this->testObject->setContainer($this->container);
+        $this->testingContainer = new ContainerBuilder();
+        $this->testingContainer->register('test.service', get_class($this->getTestService()));
+
+        $this->testObject->setContainer($this->testingContainer);
 
         $result = $this->testObject->templateAction(
             './testing_service.twig',
@@ -171,11 +148,16 @@ class TemplateControllerContainerAwareTest extends TestCase
     {
         $value = 'testing service value';
 
-        $this->container = new ContainerBuilder();
-        $this->container->register('test.service', get_class($this->getTestService()));
-        $this->container->setParameter('test.parameter', 'test.service');
+        $this->testObject = new TemplateControllerContainerAware(
+            new DefaultContextProcessorsBag(),
+            $this->getMockTwig($value)
+        );
 
-        $this->testObject->setContainer($this->container);
+        $this->testingContainer = new ContainerBuilder();
+        $this->testingContainer->register('test.service', get_class($this->getTestService()));
+        $this->testingContainer->setParameter('test.parameter', 'test.service');
+
+        $this->testObject->setContainer($this->testingContainer);
 
         $result = $this->testObject->templateAction(
             './testing_alias.twig',
@@ -226,7 +208,7 @@ class TemplateControllerContainerAwareTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'Testing service: test',
+            'OK',
             (string)$result->getContent(),
             'Обработался фэйковый сервис из контейнера.'
         );
@@ -260,7 +242,7 @@ class TemplateControllerContainerAwareTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'Testing service: test',
+            'OK',
             (string)$result->getContent(),
             'Обработался не существующий класс.'
         );
@@ -278,6 +260,12 @@ class TemplateControllerContainerAwareTest extends TestCase
     public function testResolverExistingClassFromContainer() : void
     {
         $value = 'testing service value';
+
+        $this->testObject = new TemplateControllerContainerAware(
+            new DefaultContextProcessorsBag(),
+            $this->getMockTwig('Testing service:' . $value . ' test')
+        );
+
         $this->initEmptyContainer();
 
         $result = $this->testObject->templateAction(
@@ -465,5 +453,22 @@ class TemplateControllerContainerAwareTest extends TestCase
     {
         $this->container = new ContainerBuilder();
         $this->testObject->setContainer($this->container);
+    }
+
+    /**
+     * Мок Твига.
+     *
+     * @param string $value
+     *
+     * @return mixed
+     */
+    private function getMockTwig(string $value)
+    {
+        $twigMock = Mockery::mock(Environment::class);
+        $twigMock = $twigMock->shouldReceive('getLoader')->andReturn(Mockery::self());
+        $twigMock = $twigMock->shouldReceive('getPaths')->andReturn([__DIR__.'/templates']);
+        $twigMock = $twigMock->shouldReceive('render')->andReturn($value);
+
+        return $twigMock->getMock();
     }
 }

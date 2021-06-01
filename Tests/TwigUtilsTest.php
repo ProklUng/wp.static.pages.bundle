@@ -3,34 +3,21 @@
 namespace Prokl\StaticPageMakerBundle\Tests;
 
 use Exception;
-use Faker\Factory;
-use Faker\Generator;
 use Prokl\StaticPageMakerBundle\Services\Utils\TwigUtils;
-use PHPUnit\Framework\TestCase;
+use Prokl\TestingTools\Base\BaseTestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Timber\Timber;
 use Twig\Environment;
 
 /**
  * Class TwigUtilsTest
  * @package Prokl\StaticPageMakerBundle\Tests
  */
-class TwigUtilsTest extends TestCase
+class TwigUtilsTest extends BaseTestCase
 {
     /**
      * @var TwigUtils $testObject
      */
     private $testObject;
-
-    /**
-     * @var Generator $faker
-     */
-    private $faker;
-
-    /**
-     * @var array $backupTimberLocations
-     */
-    private $backupTimberLocations = [];
 
     /**
      * @return void
@@ -40,29 +27,14 @@ class TwigUtilsTest extends TestCase
     {
         parent::setUp();
 
-        $this->faker = Factory::create();
-
-        $this->backupTimberLocations = Timber::$locations;
-
-        Timber::$locations[] = $_SERVER['DOCUMENT_ROOT'] . '/utils/Bundles/StaticPageMakerBundle/Tests/templates';
-
-        /** @var Environment $twig */
-        $twig = container()->get('twig.instance');
+        $twigMock = \Mockery::mock(Environment::class);
+        $twigMock = $twigMock->shouldReceive('getLoader')->andReturn(\Mockery::self());
+        $twigMock = $twigMock->shouldReceive('getPaths')->andReturn([__DIR__ . '/templates']);
 
         $this->testObject = new TwigUtils(
-            $twig,
+            $twigMock->getMock(),
             new Filesystem()
         );
-    }
-
-    /**
-     * @return void
-     */
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        Timber::$locations = $this->backupTimberLocations;
     }
 
     /**

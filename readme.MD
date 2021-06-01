@@ -81,7 +81,8 @@ simple_static_page:
     
     Чтобы препроцессор заработал он должен быть сервисом, помеченным тэгом static_page_maker.default.context.processor.
     
-    Препроцессор пускается автоматически, если в конфиге бандла задан ID SEO инфоблока.
+    Частная реализация: в Wordpress заведен кастомный тип поста `static_pages`. Где `title` служит для определения страницы,
+    а ACF поля `title`, `description` и `H1` - seo-свойства.
 
 2) При установке опции set_last_modified_header равной true в конфигурации бандла (local/configs/packages/static_page_maker.yaml)
    будут установлены заголовки LastModified.  
