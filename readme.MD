@@ -39,6 +39,7 @@ simple_static_page:
   defaults:
     is_granted: ['administrator']
     template:  './staticPages/example.twig'
+    statusCode: 202 # HTTP Status = Accepted
     context:
       url: '/simple_page/'
       site_name: 'ACME'

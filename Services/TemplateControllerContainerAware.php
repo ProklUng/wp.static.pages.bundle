@@ -15,6 +15,7 @@ use Twig\Error\SyntaxError;
  * @package Prokl\StaticPageMakerBundle\Services
  *
  * @since 03.11.2020
+ * @since 14.01.2021 Параметр $statusCode. По умолчанию = 200.
  *
  * @see https://github.com/symfony/symfony/blob/5.x/src/Symfony/Bundle/FrameworkBundle/Controller/TemplateController.php
  * Из-за ограничений версии Symfony 4.4 приходится выносить класс локально.
@@ -50,6 +51,7 @@ class TemplateControllerContainerAware extends TemplateController
      * @param integer|null $sharedAge Max age for shared (proxy) caching.
      * @param boolean|null $private   Whether or not caching should apply for client caches only.
      * @param array        $context   The context (arguments) of the template.
+     * @param integer      $statusCode The HTTP status code to return with the response. Defaults to 200.
      *
      * @return Response
      *
@@ -60,7 +62,8 @@ class TemplateControllerContainerAware extends TemplateController
         int $maxAge = null,
         int $sharedAge = null,
         bool $private = null,
-        array $context = []
+        array $context = [],
+        int $statusCode = 200
     ): Response {
 
         $context = $this->resolveServices($context);
@@ -71,7 +74,8 @@ class TemplateControllerContainerAware extends TemplateController
             $maxAge,
             $sharedAge,
             $private,
-            $context
+            $context,
+            $statusCode
         );
     }
 

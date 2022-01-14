@@ -3,7 +3,6 @@
 namespace Prokl\StaticPageMakerBundle\Services;
 
 use LogicException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Error\LoaderError;
@@ -15,6 +14,7 @@ use Twig\Error\SyntaxError;
  * @package Prokl\StaticPageMakerBundle\Services
  *
  * @since 21.10.2020
+ * @since 14.01.2021 Параметр $statusCode. По умолчанию = 200.
  *
  * @see https://github.com/symfony/symfony/blob/5.x/src/Symfony/Bundle/FrameworkBundle/Controller/TemplateController.php
  * Из-за ограничений версии Symfony 4.4 приходится выносить класс локально.
@@ -44,6 +44,7 @@ class TemplateController
      * @param integer|null $sharedAge Max age for shared (proxy) caching.
      * @param boolean|null $private   Whether or not caching should apply for client caches only.
      * @param array        $context   The context (arguments) of the template.
+     * @param integer      $statusCode The HTTP status code to return with the response. Defaults to 200.
      *
      * @return Response
      *
@@ -54,13 +55,14 @@ class TemplateController
         int $maxAge = null,
         int $sharedAge = null,
         bool $private = null,
-        array $context = []
+        array $context = [],
+        int $statusCode = 200
     ): Response {
         if (null === $this->twig) {
             throw new LogicException('You can not use the TemplateController if the Twig Bundle is not available.');
         }
 
-        $response = new Response($this->twig->render($template, $context));
+        $response = new Response($this->twig->render($template, $context), $statusCode);
 
         if ($maxAge) {
             $response->setMaxAge($maxAge);

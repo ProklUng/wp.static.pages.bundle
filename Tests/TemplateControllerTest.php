@@ -64,6 +64,64 @@ class TemplateControllerTest extends BaseTestCase
     }
 
     /**
+     * Выставляет ли код ответа.
+     *
+     * @return void
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function testSetStatusCode() : void
+    {
+        $maxAge = $this->faker->numberBetween(200, 400);
+        $sharedAge = $this->faker->numberBetween(200, 400);
+        $private = true;
+
+        $statusCode = 222;
+
+        $result = $this->testObject->templateAction(
+            './void.twig',
+            $maxAge,
+            $sharedAge,
+            $private,
+            [],
+            $statusCode
+        );
+
+        $this->assertSame(
+            $statusCode,
+            $result->getStatusCode()
+        );
+    }
+
+    /**
+     * Выставляет ли код ответа по умолчанию.
+     *
+     * @return void
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function testSetDefaultStatusCode() : void
+    {
+        $maxAge = $this->faker->numberBetween(200, 400);
+        $sharedAge = $this->faker->numberBetween(200, 400);
+        $private = true;
+
+        $result = $this->testObject->templateAction(
+            './void.twig',
+            $maxAge,
+            $sharedAge,
+            $private,
+        );
+
+        $this->assertSame(
+            200,
+            $result->getStatusCode()
+        );
+    }
+
+    /**
      * Выставляет ли заголовки.
      *
      * @return void
